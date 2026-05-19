@@ -1,7 +1,7 @@
 from rede.camada import Camada
 from rede.rede_neural import RedeNeural
 
-from datasets.loader import carregar_entrada_txt
+from interpretadores import carregar_entrada_txt
 
 
 # ======================================
@@ -10,8 +10,8 @@ from datasets.loader import carregar_entrada_txt
 
 rede = RedeNeural()
 
-# entrada: 120
-# oculta: 64
+# entrada: 120, as imagens tem 10 de altura e 12 de largura
+# oculta: 60
 rede.adicionar_camada(
     Camada(
         num_neuronios=60,
@@ -19,7 +19,7 @@ rede.adicionar_camada(
     )
 )
 
-# saída: 26 letras
+# saída: 26 letras, 26 neurônios para possibilita em one hot
 rede.adicionar_camada(
     Camada(
         num_neuronios=26,
@@ -36,14 +36,10 @@ dados = []
 saidas = []
 
 # exemplo:
-# entrada_A = carregar_entrada_txt("dados/A/a1.txt")
+# entrada_A = carregar_entrada_txt("CARACTERES COMPLETO/X.txt")
 # dados.append(entrada_A)
-#
-# saidas.append([
-#     1,0,0,0,0,0,0,0,0,0,
-#     0,0,0,0,0,0,0,0,0,0,
-#     0,0,0,0,0,0
-# ])
+#saida_A=letra_para_one_hot()
+# saidas.append(saida_A)
 
 
 # ======================================
@@ -65,16 +61,14 @@ if len(dados) > 0:
 
 
 # ======================================
-# TESTE
+# TESTE 
 # ======================================
 
 # rede.carregar_pesos(
 #     "modelos/pesos.json"
 # )
 #
-# entrada = carregar_entrada_txt(
-#     "dados/teste.txt"
-# )
+# entrada = carregar_entrada_txt(datasets.CARACTERES COMPLETO)
 #
 # resultado = rede.prever(entrada)
 #
