@@ -13,13 +13,6 @@ rede.adicionar_camada(Camada(num_neuronios=60, num_entradas=120, ativacao=Tanh))
 rede.adicionar_camada(Camada(num_neuronios=26, num_entradas=60, ativacao=Tanh))
 
 # ======================================
-# CARREGAMENTO DOS DADOS REAIS
-# ======================================
-
-dados = carregar_entradas_txt("CARACTERES COMPLETO/X.txt")
-saidas = carregar_saidas_one_hot("CARACTERES COMPLETO/Y_letra.txt")
-
-# ======================================
 # CARREGAMENTO E DIVISÃO DOS DADOS
 # ======================================
 dados = carregar_entradas_txt("CARACTERES COMPLETO/X.txt")
