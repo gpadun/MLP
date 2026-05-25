@@ -1,6 +1,5 @@
 import json
-
-from rede.func_ativ import derivada_sigmoid
+import os
 
 
 class RedeNeural:
@@ -46,9 +45,7 @@ class RedeNeural:
 
             erro = esperado[i] - neuronio.saida
 
-            neuronio.delta = (
-                erro * derivada_sigmoid(neuronio.z)
-            )
+            neuronio.delta = erro * neuronio.ativacao.df(neuronio.z)
 
         # camadas ocultas
         for i in reversed(range(len(self.camadas) - 1)):
@@ -62,44 +59,23 @@ class RedeNeural:
 
                 for prox_neuronio in proxima_camada.neuronios:
 
-                    erro += (
-                        prox_neuronio.pesos[j]
-                        * prox_neuronio.delta
-                    )
+                    erro += prox_neuronio.pesos[j] * prox_neuronio.delta
 
-                neuronio.delta = (
-                    erro * derivada_sigmoid(neuronio.z)
-                )
+                neuronio.delta = erro * neuronio.ativacao.df(neuronio.z)
 
         # atualização pesos
         for camada in self.camadas:
-
             for neuronio in camada.neuronios:
 
-                for i in range(len(neuronio.pesos)):
+                neuronio.pesos += taxa_aprendizado * neuronio.delta * neuronio.entradas
 
-                    neuronio.pesos[i] += (
-                        taxa_aprendizado
-                        * neuronio.delta
-                        * neuronio.entradas[i]
-                    )
-
-                neuronio.bias += (
-                    taxa_aprendizado
-                    * neuronio.delta
-                )
+                neuronio.bias += taxa_aprendizado * neuronio.delta
 
     # ======================================
     # TREINAMENTO
     # ======================================
 
-    def treinar(
-        self,
-        dados,
-        saidas,
-        epochs=1000,
-        taxa_aprendizado=0.1
-    ):
+    def treinar(self, dados, saidas, epochs=1000, taxa_aprendizado=0.1):
 
         for epoch in range(epochs):
 
@@ -110,20 +86,14 @@ class RedeNeural:
                 resultado = self.forward(entrada)
 
                 erro_total += sum(
-                    (e - r) ** 2
-                    for e, r in zip(esperado, resultado)
-                )
+                    (e - r) ** 2 for e, r in zip(esperado, resultado)
+                ) / len(esperado)
 
-                self.backpropagation(
-                    esperado,
-                    taxa_aprendizado
-                )
+                self.backpropagation(esperado, taxa_aprendizado)
 
             if epoch % 100 == 0:
 
-                print(
-                    f"Epoch {epoch} | Erro: {erro_total:.4f}"
-                )
+                print(f"Epoch {epoch} | Erro: {erro_total:.4f}")
 
     # ======================================
     # SALVAR PESOS
@@ -132,19 +102,21 @@ class RedeNeural:
     def salvar_pesos(self, arquivo):
 
         dados = []
-
         for camada in self.camadas:
-
             camada_dados = []
-
             for neuronio in camada.neuronios:
-
-                camada_dados.append({
-                    "pesos": neuronio.pesos,
-                    "bias": neuronio.bias
-                })
-
+                camada_dados.append(
+                    {
+                        # converte o array do NumPy para uma lista normal do python
+                        "pesos": neuronio.pesos.tolist(),
+                        "bias": float(neuronio.bias),
+                    }
+                )
             dados.append(camada_dados)
+
+        diretorio = os.path.dirname(arquivo)
+        if diretorio:
+            os.makedirs(diretorio, exist_ok=True)
 
         with open(arquivo, "w") as f:
             json.dump(dados, f)
@@ -160,15 +132,9 @@ class RedeNeural:
         with open(arquivo, "r") as f:
             dados = json.load(f)
 
-        for camada, camada_dados in zip(
-            self.camadas,
-            dados
-        ):
+        for camada, camada_dados in zip(self.camadas, dados):
 
-            for neuronio, neuronio_dados in zip(
-                camada.neuronios,
-                camada_dados
-            ):
+            for neuronio, neuronio_dados in zip(camada.neuronios, camada_dados):
 
                 neuronio.pesos = neuronio_dados["pesos"]
 

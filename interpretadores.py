@@ -1,24 +1,20 @@
-def carregar_entrada_txt(arquivo):
+def carregar_entradas_txt(arquivo):
+    dados_totais = []
 
     with open(arquivo, "r") as f:
+        for linha in f:
+            valores = linha.split(",")
 
-        conteudo = f.read()
+            entrada = [
+                0 if int(v.strip()) == -1 else 1 for v in valores if v.strip() != ""
+            ]
 
-    valores = conteudo.split(",")
+            if len(entrada) == 120:
+                dados_totais.append(entrada)
+            elif len(entrada) > 0:
+                print(f"Aviso: Linha ignorada. Esperado 120, recebido {len(entrada)}")
 
-    entrada = [
-        0 if int(v.strip()) == -1 else 1
-        for v in valores
-    ]
-
-    if len(entrada) != 120:
-
-        raise ValueError(
-            f"Esperado 120 valores, recebido {len(entrada)}"
-        )
-
-    return entrada
-
+    return dados_totais
 
 
 def letra_para_one_hot(letra):
@@ -49,8 +45,6 @@ def carregar_saidas_one_hot(arquivo):
             # ignora linhas vazias
             if letra != "":
 
-                saidas.append(
-                    letra_para_one_hot(letra)
-                )
+                saidas.append(letra_para_one_hot(letra))
 
     return saidas
