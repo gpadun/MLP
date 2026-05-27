@@ -5,7 +5,7 @@ import numpy as np
 class Neuronio:
 
     def __init__(self, num_entradas, ativacao):
-        # inicia os pesos como um array do NumPy
+        # inicia os pesos como um array do numpy
         self.pesos = np.random.uniform(-0.1, 0.1, num_entradas)
         self.bias = random.uniform(-0.1, 0.1)
 
