@@ -1,6 +1,6 @@
 === Hiperparametros do Modelo ===
 Total de Camadas: 2
-  Camada 1: 100 neuronios | Ativacao: Tanh
+  Camada 1: 60 neuronios | Ativacao: Tanh
   Camada 2: 26 neuronios | Ativacao: Tanh
 Taxa de Aprendizado: 0.01
 Epoch de Treinamento: 1000
