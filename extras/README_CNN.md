@@ -31,10 +31,24 @@ E salva os resultados em:
 - Camada densa final com softmax.
 - Funcao de perda de entropia cruzada categorica.
 - Treinamento por gradiente descendente estocastico.
-- Separacao hold-out igual ao EP principal: ultimas 130 amostras para teste cego
-  e 20% do restante para validacao.
+- Separacao hold-out: ultimas 130 amostras para teste cego e 20% do restante para validacao.
 - Avaliacao com acuracia, matriz de confusao, precisao macro, recall macro e F1
   macro.
+
+## Resultados obtidos
+
+Com 10 epocas e taxa de aprendizado 0.02, o teste cego gerou:
+
+- Acuracia: 80.00%
+- Precisao macro: 0.8533
+- Recall macro: 0.8000
+- F1 macro: 0.7958
+
+## Itens opcionais contemplados
+
+- Implementacao da CNN.
+- Outra funcao de perda: entropia cruzada categorica.
+- Uso de hold-out no experimento da CNN.
 
 ## Por que isso conta como extra
 
