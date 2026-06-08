@@ -54,7 +54,7 @@ class CNNCaracteres:
 
     @staticmethod
     def softmax(logits):
-        # Softmax transforma as 26 saidas em uma distribuicao de probabilidades.
+        # Softmax transforma as 26 saidas em uma distribuicao de probabilidades
         # Subtrair o maximo melhora a estabilidade numerica da exponencial
         ajustado = logits - np.max(logits)
         exp = np.exp(ajustado)
@@ -62,8 +62,8 @@ class CNNCaracteres:
 
     @staticmethod
     def max_pooling(x, tamanho=2):
-        # Max-pooling reduz a resolucao mantendo a ativacao mais forte de cada
-        # bloco 2x2. A mascara guarda onde estava o maximo para o backpropagation
+        # Max-pooling reduz a resolucao mantendo a ativacao mais forte de cada bloco 2x2
+        # A mascara guarda onde estava o maximo para o backpropagation
         filtros, altura, largura = x.shape
         blocos = x.reshape(filtros, altura // tamanho, tamanho, largura // tamanho, tamanho)
         saida = blocos.max(axis=(2, 4))
@@ -121,8 +121,8 @@ class CNNCaracteres:
         dflatten = self.pesos_dense @ dlogits
         dpool = dflatten.reshape(cache["pool"].shape)
 
-        # No max-pooling, apenas o pixel que foi escolhido como maximo recebe o
-        # gradiente. Os demais pixels do bloco 2x2 recebem zero
+        # No max-pooling, apenas o pixel que foi escolhido como maximo recebe o gradiente.
+        # Os demais pixels do bloco 2x2 recebem zero
         dativado = np.zeros_like(cache["conv"])
         for f in range(self.num_filtros):
             for i in range(dpool.shape[1]):
@@ -206,8 +206,8 @@ def dividir_holdout(x, y):
 
 
 def avaliar(modelo, x, y):
-    # A matriz de confusao registra, para cada classe real, qual classe foi
-    # prevista. A diagonal principal representa os acertos
+    # A matriz de confusao registra, para cada classe real, qual classe foi prevista 
+    # A diagonal principal representa os acertos
     matriz = np.zeros((26, 26), dtype=int)
     acertos = 0
 
@@ -223,8 +223,8 @@ def avaliar(modelo, x, y):
 
 
 def metricas_macro(matriz):
-    # Macro media calcula a metrica por classe e depois tira a media. Assim,
-    # cada letra tem o mesmo peso na avaliacao final
+    # Macro media calcula a metrica por classe e depois tira a media
+    # Assim, cada letra tem o mesmo peso na avaliacao final
     precisao_total = 0
     recall_total = 0
     f1_total = 0
@@ -283,8 +283,7 @@ def main():
 
     modelo = CNNCaracteres(num_filtros=8, tamanho_filtro=3, seed=42)
 
-    # Hiperparametros escolhidos por teste simples no proprio extra, mantendo a
-    # arquitetura pequena para nao desviar do foco do EP
+    # Hiperparametros escolhidos por teste simples no proprio extra
     epocas = 10
     taxa_aprendizado = 0.02
     historico = []
@@ -293,7 +292,7 @@ def main():
 
     for epoca in range(1, epocas + 1):
         # Embaralhar a ordem evita que a rede veja sempre as classes na mesma
-        # sequencia durante o gradiente descendente estocastico
+        # sequencia durante o gradiente descendente
         rng.shuffle(indices)
         perda_total = 0
 
