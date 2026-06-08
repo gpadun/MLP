@@ -3,11 +3,16 @@ Este repositório contém a implementação do zero de uma rede neural **Multila
 ## Como Executar o Projeto
 Para garantir a reprodutibilidade ideal do ambiente de execução e das dependências sem a necessidade de configurações manuais de ambientes virtuais (`venv`), utilizamos o gerenciador de pacotes uv.
 
-### 1. Pré-requisito
+# 1. Pré-requisito
 Certifique-se de ter o `uv` instalado em sua máquina. Caso não possua, a instalação pode ser feita rapidamente pelo terminal:
-# macOS/Linux
+## macOS/Linux
 curl -LsSf [https://astral.sh/uv/install.sh](https://astral.sh/uv/install.sh) | sh
-# Windows (PowerShell)
+## Windows (PowerShell)
 powershell -c "irm [https://astral.sh/uv/install.ps1](https://astral.sh/uv/install.ps1) | iex"
-# Alternativa via pip
+## Alternativa via pip
 pip install uv
+
+## 2. Execução
+Na raiz do diretório, execute o comando
+uv run main.py
+
