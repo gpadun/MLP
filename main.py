@@ -3,6 +3,9 @@ from rede.rede_neural import RedeNeural
 from rede.func_ativ import Tanh
 from interpretadores import carregar_entradas_txt, carregar_saidas_one_hot
 import csv
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.metrics import ConfusionMatrixDisplay
 
 # ======================================
 # 1. CRIAÇÃO DA REDE NEURAL (ARQUITETURA)
@@ -122,32 +125,27 @@ with open("artefatos/saidas_teste.csv", "w", newline="") as f:
     writer.writerows(registro_saidas)
 
 # ======================================
-# 5. MATRIZ DE CONFUSÃO E MACRO AVERAGE
+# 5. MATRIZ DE CONFUSÃO E MÉTRICAS (Versão Visual)
 # ======================================
+print("\n" + "=" * 40)
+print(" Matriz de confusão e métricas")
+print("=" * 40)
+
 num_classes = 26
 matriz = [[0 for _ in range(num_classes)] for _ in range(num_classes)]
 
-# Preenche a matriz bidimensional onde as linhas são as classes reais e as colunas as predições
+# Preenche a matriz com os resultados do teste
 for esperado, previsto in registro_saidas:
     matriz[esperado][previsto] += 1
 
-print("--- Matriz de confusão (linha=esperado, coluna=previsto) ---")
-for linha in matriz:
-    print(" ".join([f"{val:2d}" for val in linha]))
-
-# Variáveis para o cálculo da Macro Média (Macro Average), que calcula a métrica
-# para cada classe separadamente e depois faz a média, tratando todas as letras com peso igual.
 soma_precisao = 0
 soma_recall = 0
 soma_f1 = 0
 classes_presentes = 0
 
 for c in range(num_classes):
-    # Verdadeiros Positivos (diagonal principal)
     tp = matriz[c][c]
-    # Falsos Positivos (soma da coluna menos o TP)
     fp = sum(matriz[i][c] for i in range(num_classes)) - tp
-    # Falsos Negativos (soma da linha menos o TP)
     fn = sum(matriz[c][i] for i in range(num_classes)) - tp
 
     precisao = tp / (tp + fp) if (tp + fp) > 0 else 0
@@ -167,7 +165,28 @@ if classes_presentes > 0:
 else:
     macro_precisao = macro_recall = macro_f1 = 0
 
-print("\n--- Métricas gerais (Macro Média) ---")
+print("\n--- Métricas Gerais (Macro Média) ---")
 print(f"Precisão: {macro_precisao:.4f}")
 print(f"Recall:   {macro_recall:.4f}")
 print(f"F1-Score: {macro_f1:.4f}")
+print("=======================================\n")
+
+# ======================================
+# 6. PLOTAGEM DA MATRIZ
+# ======================================
+matriz_np = np.array(matriz)
+disp = ConfusionMatrixDisplay(
+    confusion_matrix=matriz_np,
+    display_labels=[chr(i) for i in range(ord('A'), ord('Z') + 1)] # Transforma índices em A-Z
+)
+
+fig, ax = plt.subplots(figsize=(14, 14))
+
+disp.plot(
+    cmap="Blues",
+    ax=ax,
+    xticks_rotation=90
+)
+
+plt.title("Matriz de Confusão do Teste (MLP)")
+plt.show()
