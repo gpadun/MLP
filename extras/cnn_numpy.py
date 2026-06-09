@@ -270,6 +270,86 @@ def salvar_matriz(matriz):
         writer.writerows(matriz.tolist())
 
 
+def salvar_grafico_treino(historico):
+    try:
+        import matplotlib
+
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+    except ImportError:
+        print("Matplotlib nao encontrado. Grafico de treino nao foi gerado.")
+        return
+
+    ARTEFATOS_DIR.mkdir(parents=True, exist_ok=True)
+    epocas = [linha[0] for linha in historico]
+    perdas = [linha[1] for linha in historico]
+    acuracias = [linha[2] * 100 for linha in historico]
+
+    fig, eixo_perda = plt.subplots(figsize=(9, 5))
+    eixo_perda.plot(epocas, perdas, marker="o", color="tab:blue", label="Perda treino")
+    eixo_perda.set_xlabel("Epoca")
+    eixo_perda.set_ylabel("Entropia cruzada", color="tab:blue")
+    eixo_perda.tick_params(axis="y", labelcolor="tab:blue")
+    eixo_perda.grid(True, linestyle="--", alpha=0.4)
+
+    eixo_acc = eixo_perda.twinx()
+    eixo_acc.plot(
+        epocas,
+        acuracias,
+        marker="s",
+        color="tab:green",
+        label="Acuracia validacao",
+    )
+    eixo_acc.set_ylabel("Acuracia de validacao (%)", color="tab:green")
+    eixo_acc.tick_params(axis="y", labelcolor="tab:green")
+
+    fig.suptitle("Treinamento da CNN")
+    fig.tight_layout()
+    caminho = ARTEFATOS_DIR / "grafico_treino_cnn.png"
+    plt.savefig(caminho, dpi=300, bbox_inches="tight")
+    plt.close(fig)
+    print(f"Grafico de treino salvo em: {caminho}")
+
+
+def salvar_exemplos_predicoes(modelo, x_teste, y_teste, quantidade=12):
+    try:
+        import matplotlib
+
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+    except ImportError:
+        print("Matplotlib nao encontrado. Exemplos de predicao nao foram gerados.")
+        return
+
+    ARTEFATOS_DIR.mkdir(parents=True, exist_ok=True)
+    alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    quantidade = min(quantidade, len(x_teste))
+
+    fig, eixos = plt.subplots(3, 4, figsize=(9, 7))
+    for eixo, imagem, esperado_one_hot in zip(eixos.ravel(), x_teste, y_teste):
+        esperado = int(np.argmax(esperado_one_hot))
+        previsto = modelo.prever(imagem)
+        cor_titulo = "green" if previsto == esperado else "red"
+
+        eixo.imshow(imagem, cmap="gray_r", vmin=0, vmax=1)
+        eixo.set_title(
+            f"Esp: {alfabeto[esperado]} | Prev: {alfabeto[previsto]}",
+            color=cor_titulo,
+            fontsize=10,
+        )
+        eixo.axis("off")
+
+    for eixo in eixos.ravel()[quantidade:]:
+        eixo.axis("off")
+
+    fig.suptitle("Exemplos de predicao da CNN no teste cego")
+    fig.tight_layout()
+    caminho = ARTEFATOS_DIR / "exemplos_predicoes_cnn.png"
+    plt.savefig(caminho, dpi=300, bbox_inches="tight")
+    plt.close(fig)
+    print(f"Exemplos de predicao salvos em: {caminho}")
+
+
 def main():
     print("=== Extra opcional: CNN em NumPy ===")
     print("Este script nao altera o MLP principal do EP.\n")
@@ -314,6 +394,8 @@ def main():
 
     salvar_historico(historico)
     salvar_matriz(matriz)
+    salvar_grafico_treino(historico)
+    salvar_exemplos_predicoes(modelo, x_teste, y_teste)
     modelo.salvar_pesos(ARTEFATOS_DIR / "pesos_cnn.json")
 
     print("\n--- Resultado final no teste cego ---")
