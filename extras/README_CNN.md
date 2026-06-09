@@ -22,6 +22,8 @@ E salva os resultados em:
 - `artefatos/cnn/historico_cnn.csv`
 - `artefatos/cnn/matriz_confusao_cnn.csv`
 - `artefatos/cnn/pesos_cnn.json`
+- `artefatos/cnn/grafico_treino_cnn.png`
+- `artefatos/cnn/exemplos_predicoes_cnn.png`
 
 ## O que foi implementado
 
@@ -34,6 +36,8 @@ E salva os resultados em:
 - Separacao hold-out: ultimas 130 amostras para teste cego e 20% do restante para validacao.
 - Avaliacao com acuracia, matriz de confusao, precisao macro, recall macro e F1
   macro.
+- Grafico da perda de treino e acuracia de validacao.
+- Grade com exemplos de predicoes no teste cego.
 
 ## Resultados obtidos
 
